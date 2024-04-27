@@ -5,6 +5,24 @@ import { useLoaderData } from "react-router-dom";
 const Users = () => {
     const loadedUser = useLoaderData()
     const [users, setUsers] = useState(loadedUser)
+
+    const handleDelete = id => {
+        //    make sure user is confirm 
+        fetch(`http://localhost:5000/user/${id}`, {
+            method: 'DELETE'
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data)
+                if (data.deleteCount > 0) {
+                    alert('Success Delete')
+                    // remove the user from ui 
+                    const remaining = users.filter(user => user._id !== id)
+                    setUsers(remaining)
+                }
+            })
+    }
+
     return (
         <div>
             <h4>User: {loadedUser.length}</h4>
@@ -28,7 +46,7 @@ const Users = () => {
                                 <td>{user.email}</td>
                                 <td>{user.crateAt}</td>
                                 <td>
-                                    <button className="btn">X</button>
+                                    <button onClick={() => { handleDelete(user._id) }} className="btn">X</button>
                                 </td>
                                 <td>Blue</td>
                             </tr>)
